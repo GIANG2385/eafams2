@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { usePortal } from '../context/PortalContext';
+import { EafamsLogo } from './EafamsLogo';
 import { Shield, User, LogOut, ChevronRight, AlertCircle, X, CheckCircle, Info } from 'lucide-react';
 
 export const Header: React.FC = () => {
@@ -16,42 +17,62 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
-      {/* Singapore Gov Agency Top Bar */}
-      <div className="bg-slate-100 border-b border-slate-200 text-slate-600 text-[11px] px-4 py-1 flex items-center justify-between">
-        <div className="max-w-6xl mx-auto w-full flex items-center gap-2">
-          <div className="flex items-center gap-1.5 font-medium">
-            <span className="w-3.5 h-2.5 bg-red-600 inline-block rounded-xs"></span>
-            <span>Singapore Government Agency</span>
-          </div>
-          <span className="text-slate-400">|</span>
-          <span className="text-slate-500 hidden sm:inline">An Official Singapore Government Agency Website</span>
-        </div>
-      </div>
-
-
       {/* Main Brand Bar */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
         <div
           onClick={() => navigate(currentParent ? '/home' : '/')}
-          className="flex items-center gap-3 cursor-pointer group"
+          className="cursor-pointer group flex items-center"
         >
-          {/* MOE Crest / Lion Mark */}
-          <div className="w-10 h-10 rounded-lg bg-[#1d4f91] text-white flex items-center justify-center font-bold text-lg shadow-sm group-hover:bg-[#163e72] transition-colors">
-            MOE
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg text-slate-900 tracking-tight">Parent e-Services</span>
-              <span className="bg-blue-100 text-[#1d4f91] text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded">
-                Official
-              </span>
-            </div>
-            <p className="text-xs text-slate-500">Ministry of Education Singapore &bull; Education Accounts & Fees</p>
-          </div>
+          <EafamsLogo className="h-9 w-auto" />
         </div>
 
         {/* User Info & Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-6">
+          {!currentParent && (
+            <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-700">
+              <span
+                onClick={() => navigate('/')}
+                className={`${
+                  route.path === '/'
+                    ? 'text-[#1a56db] border-b-2 border-[#1a56db] pb-1'
+                    : 'hover:text-slate-900'
+                } cursor-pointer transition-colors`}
+              >
+                Home
+              </span>
+              <span
+                onClick={() => {
+                  if (route.path !== '/') {
+                    navigate('/');
+                    setTimeout(() => {
+                      document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  } else {
+                    document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="hover:text-slate-900 cursor-pointer transition-colors"
+              >
+                About
+              </span>
+              <span
+                onClick={() => {
+                  if (route.path !== '/') {
+                    navigate('/');
+                    setTimeout(() => {
+                      document.getElementById('help-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  } else {
+                    document.getElementById('help-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="hover:text-slate-900 cursor-pointer transition-colors"
+              >
+                Help
+              </span>
+            </div>
+          )}
+
           {currentParent ? (
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
@@ -70,10 +91,9 @@ export const Header: React.FC = () => {
           ) : (
             <button
               onClick={() => navigate('/singpass')}
-              className="flex items-center gap-2 bg-[#d82c20] hover:bg-[#b82218] text-white text-xs font-semibold px-3 py-2 rounded-md shadow-xs transition-colors"
+              className="bg-[#1a56db] hover:bg-[#1545b2] text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-xs transition-colors cursor-pointer"
             >
-              <Shield className="w-3.5 h-3.5" />
-              <span>Log in with Singpass</span>
+              Log in
             </button>
           )}
         </div>

@@ -103,13 +103,14 @@ export const SingpassMockModal: React.FC = () => {
             </div>
 
             <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">
-              Select Parent Profile to Authenticate:
+              Select Test Scenario:
             </h2>
 
             <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
               {parents.map((p) => {
                 const info = parentTestScenarios[p.id];
                 const isSelected = selectedParentId === p.id;
+                if (!info) return null;
 
                 return (
                   <div
@@ -121,35 +122,9 @@ export const SingpassMockModal: React.FC = () => {
                         : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-md bg-[#1d4f91] text-white text-xs font-bold flex items-center justify-center">
-                          {p.id}
-                        </span>
-                        <span className="font-bold text-sm text-slate-900">{p.fullName}</span>
-                        <span className="text-xs text-slate-500 font-mono">({p.nric})</span>
-                        {!p.isActivate && (
-                          <span className="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-1.5 py-0.2 rounded">
-                            New User
-                          </span>
-                        )}
-                        {p.isActivate && (
-                          <span className="bg-slate-100 text-slate-700 text-[10px] font-semibold px-1.5 py-0.2 rounded">
-                            Returning
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs font-semibold text-slate-500">{info?.role}</span>
-                    </div>
-
-                    <div className="text-xs text-slate-600 mb-1">
-                      <span className="font-medium text-slate-700">Children: </span>
-                      {info?.children || 'None'}
-                    </div>
-
-                    <div className="text-[11px] text-blue-900 bg-blue-100/60 rounded px-2 py-1">
-                      <span className="font-semibold">Test goal: </span>
-                      {info?.scenario}
+                    <div className="text-xs sm:text-sm text-slate-800 leading-snug">
+                      <span className="font-semibold text-slate-900">Test scenario: </span>
+                      <span>{info.scenario}</span>
                     </div>
                   </div>
                 );
@@ -163,7 +138,7 @@ export const SingpassMockModal: React.FC = () => {
                 className="w-full bg-[#d82c20] hover:bg-[#b82218] text-white font-bold py-3 px-4 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Shield className="w-4 h-4" />
-                <span>Log in as {parents.find((p) => p.id === selectedParentId)?.fullName}</span>
+                <span>Sign in with Singpass</span>
               </button>
             </div>
 

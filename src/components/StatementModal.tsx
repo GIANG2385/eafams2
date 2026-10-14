@@ -6,6 +6,7 @@
 import React from 'react';
 import { StudentProfile, EducationAccount, EaLedgerEntry } from '../types';
 import { formatSGD, formatDateDDMMYYYY } from '../config';
+import { EafamsLogo } from './EafamsLogo';
 import { X, Printer, Download, GraduationCap } from 'lucide-react';
 
 interface StatementModalProps {
@@ -61,15 +62,13 @@ export const StatementModal: React.FC<StatementModalProps> = ({
           {/* Header */}
           <div className="flex items-start justify-between border-b-2 border-[#1d4f91] pb-6 mb-6">
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-7 h-7 bg-[#1d4f91] text-white text-xs font-bold rounded flex items-center justify-center">
-                  MOE
-                </span>
-                <span className="text-xl font-bold tracking-tight text-[#1d4f91]">
+              <div className="flex items-center gap-3 mb-2">
+                <EafamsLogo className="h-8 w-auto" variant="light" />
+                <span className="text-sm font-bold tracking-tight text-slate-800">
                   MINISTRY OF EDUCATION SINGAPORE
                 </span>
               </div>
-              <h1 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">
+              <h1 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Education Account &bull; Statement of Account
               </h1>
             </div>

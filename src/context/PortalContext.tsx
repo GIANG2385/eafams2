@@ -3,7 +3,7 @@
  * payment execution, and prototype demo tools.
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   ParentProfile,
   StudentProfile,
@@ -99,6 +99,9 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Initialize state with seed data
   const [data, setData] = useState(() => createInitialSeed());
   const [currentParent, setCurrentParent] = useState<ParentProfile | null>(null);
+  const currentParentRef = useRef<ParentProfile | null>(null);
+  currentParentRef.current = currentParent;
+
   const [session, setSession] = useState<Session | null>(null);
 
   // Router state
@@ -139,8 +142,8 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       touchActivity();
 
       // Guarded routes check session
-      const publicRoutes = ['/', '/singpass'];
-      if (!publicRoutes.includes(to) && !currentParent) {
+      const publicRoutes = ['/', '/singpass', '/login', '/signin'];
+      if (!publicRoutes.includes(to) && !currentParentRef.current) {
         setBannerMessage({ type: 'warning', text: MSG.MSG_0002, code: 'MSG-0002' });
         setRoute({ path: '/' });
         return;
@@ -152,7 +155,7 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
       window.scrollTo(0, 0);
     },
-    [currentParent, touchActivity]
+    [touchActivity]
   );
 
   // Session timeout monitor
@@ -213,11 +216,19 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return { success: false, message: MSG.MSG_0801 };
       }
 
-      // Find parent by ID
-      const targetParent = data.parents.find((p) => p.id === selection);
+      // Find parent by ID, NRIC, userId, or code
+      const cleanSelection = (selection || '').trim().toUpperCase();
+      const targetParent =
+        data.parents.find(
+          (p) =>
+            p.id.toUpperCase() === cleanSelection ||
+            p.nric.toUpperCase() === cleanSelection ||
+            (p.userId && p.userId.toUpperCase() === cleanSelection) ||
+            (p.code && p.code.toUpperCase() === cleanSelection)
+        ) || (cleanSelection === '' ? data.parents[0] : undefined);
+
       if (!targetParent) {
         setBannerMessage({ type: 'error', text: MSG.MSG_0801, code: 'MSG-0801' });
-        navigate('/');
         return { success: false, message: MSG.MSG_0801 };
       }
 
@@ -260,6 +271,8 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         timestamp: nowIso,
       });
 
+      // Synchronously update ref before any routing or asynchronous state updates
+      currentParentRef.current = targetParent;
       setCurrentParent(targetParent);
       setSession(newSession);
 
@@ -277,31 +290,35 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
       }
 
-      navigate('/home');
+      setRoute({ path: '/home' });
+      window.scrollTo(0, 0);
       return { success: true };
     },
-    [data, navigate, clearBanner, today, prototypeTools.govApiDown, prototypeTools.failClosure]
+    [data, clearBanner, today, prototypeTools.govApiDown, prototypeTools.failClosure]
   );
 
   const logout = useCallback(
     (reason?: string) => {
-      if (currentParent) {
+      const activeParent = currentParentRef.current;
+      if (activeParent) {
         data.auditLogs.push({
           id: `AUD-${Date.now()}-LOGOUT`,
-          actor: currentParent.userId || currentParent.id,
+          actor: activeParent.userId || activeParent.id,
           action: 'LOGOUT',
           entity: 'Session',
-          entityId: currentParent.id,
+          entityId: activeParent.id,
           oldValue: 'Active',
           newValue: reason || 'User Logout',
           timestamp: new Date().toISOString(),
         });
       }
+      currentParentRef.current = null;
       setCurrentParent(null);
       setSession(null);
-      navigate('/');
+      setRoute({ path: '/' });
+      window.scrollTo(0, 0);
     },
-    [currentParent, data.auditLogs, navigate]
+    [data.auditLogs]
   );
 
   // Linked students calculation

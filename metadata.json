@@ -1,0 +1,6 @@
+{
+  "name": "Parent e-Service Portal - MOE Education Account & Fees",
+  "description": "Official Parent e-Service Portal for Singapore MOE Education Accounts, fee payments, and financial assistance management (FS-08, F1, F9).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
